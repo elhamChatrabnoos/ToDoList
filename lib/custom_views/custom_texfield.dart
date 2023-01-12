@@ -18,21 +18,20 @@ class CustomTextField extends StatefulWidget {
   final Icon? icon;
   final Color? boxColor;
   final String? hintText;
-  final String? initialValue;
+  final String? initialValue ;
 
   // final textController = TextEditingController();
   final InputBorder? borderStyle;
   final double marginSize;
-
-  final textController = TextEditingController();
-
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
 }
 
 class _CustomTextFieldState extends State<CustomTextField> {
+
   bool isSecure = false;
+  // final textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +47,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             borderRadius: BorderRadius.all(Radius.circular(15)),
             color: widget.boxColor),
         child: TextFormField(
+          // controller: textController,
           initialValue: widget.initialValue,
           onChanged: widget.onChanged,
           decoration: InputDecoration(

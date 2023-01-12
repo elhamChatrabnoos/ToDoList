@@ -16,14 +16,14 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-
   DataAccess dataAccess = DataAccess();
+
+  String? taskName;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:
-      ListView.builder(
+      body: ListView.builder(
           itemCount: tasksList.length,
           itemExtent: 60,
           padding: const EdgeInsets.all(30),
@@ -31,15 +31,40 @@ class _MainPageState extends State<MainPage> {
                 itemIndex: index,
                 name: tasksList[index].taskName,
                 icon: tasksList[index].taskIcon,
-              )
-      ),
+                onSelectedPopupItem: (value) {
+                  if (value == 'Delete') {
+                    setState(() {
+                      dataAccess.deleteTask(tasksList[index]);
+                    });
+                  }
+                  if (value == 'Edit') {
+                    setState(() {
+                      showModalBottomSheet(context: context, builder: (context) {
+                        return CustomBottomSheet(task: tasksList[index]);
+                      },
+                      ).then((value) {
+                        print(value);
+                        tasksList[index].taskName = value;
+                      },);
+                      // dataAccess.updateTask(index, tasksList[index]);
+                    });
+                  }
+                },
+              )),
       floatingActionButton: CustomFloatingButton(
         icon: Icons.add,
         onPressed: () {
           setState(() {
-            showModalBottomSheet(context: context, builder: (context) {
-              return CustomBottomSheet();
-            }
+            showModalBottomSheet(
+              context: context,
+              builder: (context) => CustomBottomSheet(),
+            ).then(
+              (value) {
+                setState(() {
+                  dataAccess.insertTask(
+                      Task(taskName: value, taskIcon: Icon(Icons.ac_unit)));
+                });
+              },
             );
           });
         },
