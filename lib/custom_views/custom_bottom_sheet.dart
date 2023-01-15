@@ -34,9 +34,11 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
           CustomButton(
             text: 'Save',
             onPressed: () {
-              setState(() {
-                Navigator.pop(context, editedTask);
-              });
+              Navigator.pop(context, editedTask);
+
+              // setState(() {
+              //   Navigator.pop(context, editedTask);
+              // });
             },
           )
         ],

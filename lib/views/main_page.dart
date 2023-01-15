@@ -5,6 +5,7 @@ import 'package:to_do_list/database/data_access.dart';
 import 'package:to_do_list/custom_views/custom_list-item.dart';
 
 import '../models/task.dart';
+import 'details.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key, this.task}) : super(key: key);
@@ -24,45 +25,40 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: ListView.builder(
-          itemCount: tasksList.length,
-          itemExtent: 60,
-          padding: const EdgeInsets.all(30),
-          itemBuilder: (context, index) => CustomListItem(
-                itemIndex: index,
-                name: tasksList[index].taskName,
-                icon: tasksList[index].taskIcon,
-                onSelectedPopupItem: (value) {
-                  if (value == 'Delete') {
-                    setState(() {
-                      dataAccess.deleteTask(tasksList[index]);
-                    });
-                  }
-                  if (value == 'Edit') {
-                    setState(() {
-                      showModalBottomSheet(context: context, builder: (context) {
-                        return CustomBottomSheet(task: tasksList[index]);
-                      },
-                      ).then((value) {
-                        print(value);
-                        tasksList[index].taskName = value;
-                      },);
-                      // dataAccess.updateTask(index, tasksList[index]);
-                    });
-                  }
-                },
-              )),
+        itemCount: tasksList.length,
+        itemExtent: 60,
+        padding: const EdgeInsets.all(30),
+        itemBuilder: (context, index) => InkWell(
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => DetailsPage(task: tasksList[index]),
+                ));
+          },
+          child: CustomListItem(
+            itemIndex: index,
+            name: tasksList[index].taskName,
+            icon: tasksList[index].taskIcon,
+            onSelectedPopupItem: (value) {
+              updateList(value, index);
+            },
+          ),
+        ),
+      ),
       floatingActionButton: CustomFloatingButton(
         icon: Icons.add,
         onPressed: () {
-          setState(() {
-            showModalBottomSheet(
+          setState(() async {
+            await showModalBottomSheet(
               context: context,
               builder: (context) => CustomBottomSheet(),
             ).then(
               (value) {
                 setState(() {
                   dataAccess.insertTask(
-                      Task(taskName: value, taskIcon: Icon(Icons.ac_unit)));
+                      Task(taskName: value,
+                          taskIcon: const Icon(Icons.ac_unit), taskImage: 'images/work.jpg'));
                 });
               },
             );
@@ -70,5 +66,27 @@ class _MainPageState extends State<MainPage> {
         },
       ),
     );
+  }
+
+  void updateList(dynamic value, int index) {
+    if (value == 'Delete') {
+      setState(() {
+        dataAccess.deleteTask(tasksList[index]);
+      });
+    }
+    if (value == 'Edit') {
+      showModalBottomSheet(
+        context: context,
+        builder: (context) {
+          return CustomBottomSheet(task: tasksList[index]);
+        },
+      ).then((value) {
+        setState(() {
+          tasksList[index].taskName = value;
+          // dataAccess.updateTask(index, tasksList[index]);
+        });
+       },
+      );
+    }
   }
 }
