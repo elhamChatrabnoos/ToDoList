@@ -4,6 +4,7 @@ class Task {
   String taskName;
   Icon? taskIcon;
   String taskImage;
+  int? ap;
 
   Task({
     required this.taskName,
@@ -16,8 +17,8 @@ class Task {
 List<Task> tasksList = [
   Task(
       taskName: 'buy',
-      taskIcon: Icon(Icons.shop),
-      taskImage: 'images/store.png'
+      taskIcon: Icon(Icons.add_business_outlined),
+      taskImage: 'images/buy.png'
   ),
   Task(
     taskName: 'excersice',
@@ -32,16 +33,16 @@ List<Task> tasksList = [
   Task(
       taskName: 'study',
       taskIcon: Icon(Icons.book),
-      taskImage: 'images/work.jpg'
+      taskImage: 'images/study.jpg'
   ),
   Task(
-    taskName: 'shop',
-    taskIcon: Icon(Icons.add_business_outlined),
-   taskImage: 'images/work.jpg'
+    taskName: 'sleep',
+    taskIcon: Icon(Icons.airline_seat_legroom_extra),
+   taskImage: 'images/sleep.webp'
   ),
   Task(
       taskName: 'session',
       taskIcon: Icon(Icons.group),
-      taskImage: 'images/work.jpg'
+      taskImage: 'images/session.jpg'
   )
 ];
