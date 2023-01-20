@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:to_do_list/custom_views/custom_bottom_sheet.dart';
 import 'package:to_do_list/custom_views/popup_menu_item.dart';
-import 'package:to_do_list/database/data_access.dart';
+import 'package:to_do_list/core/data_access.dart';
 import 'package:to_do_list/models/task.dart';
 
 class CustomListItem extends StatefulWidget {
@@ -15,7 +15,7 @@ class CustomListItem extends StatefulWidget {
       : super(key: key);
 
   String name;
-  final dynamic icon;
+  IconData? icon;
   String number;
   final Function()? popupItemClick;
   final int itemIndex;
@@ -36,11 +36,11 @@ class _CustomListItemState extends State<CustomListItem> {
         padding: const EdgeInsets.all(10),
         child: Row(
           children: [
-            widget.icon,
+            Icon(widget.icon),
             const SizedBox(width: 10),
             Text(
-              widget.name,
-              style: const TextStyle(color: Colors.black),
+              (widget.name.length > 20) ? widget.name.substring(0, 20) : widget.name,
+              style: const TextStyle(color: Colors.black), 
             ),
             const Spacer(),
             PopupMenuButton(
