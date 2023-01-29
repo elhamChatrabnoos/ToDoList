@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:to_do_list/core/constants.dart';
 
 import '../pages/data_from_server.dart';
 import 'custom_drawer_item.dart';
@@ -13,7 +14,7 @@ class CustomDrawer extends StatelessWidget {
     return Column(
       children: [
         Container(
-          height: 200,
+          height: MediaQuery.of(context).size.height/4,
           width: MediaQuery.of(context).size.width,
           alignment: Alignment.center,
           color: const Color.fromARGB(200, 255, 213, 179),
@@ -24,21 +25,22 @@ class CustomDrawer extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                   fontSize: 30)),
         ),
+        CustomSizes.littleHeight,
         Expanded(
             child: ListView(
-              children: [
-                InkWell(
-                  onTap: actionOnTap,
-                  child: const CustomDrawerItem(
-                      itemText: 'Load data', itemIcon: Icons.get_app),
-                ),
-                InkWell(
-                  onTap: (){},
-                  child: const CustomDrawerItem(
-                      itemText: 'Settings', itemIcon: Icons.settings),
-                )
-              ],
-            ))
+          children: [
+            InkWell(
+              onTap: actionOnTap,
+              child: const CustomDrawerItem(
+                  itemText: 'Load data', itemIcon: Icons.get_app),
+            ),
+            InkWell(
+              onTap: () {},
+              child: const CustomDrawerItem(
+                  itemText: 'Settings', itemIcon: Icons.settings),
+            )
+          ],
+        ))
       ],
     );
   }

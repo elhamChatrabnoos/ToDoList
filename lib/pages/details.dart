@@ -16,7 +16,7 @@ class DetailsPage extends StatelessWidget {
           Image.asset(task!.taskImage),
           const SizedBox(height: 20),
           Text(
-            task!.taskName,
+            task?.taskName??'iuomk,k',
             style: const TextStyle(
                 color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
           ),

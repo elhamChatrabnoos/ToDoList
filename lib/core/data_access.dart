@@ -7,15 +7,15 @@ import 'keys.dart';
 class DataAccess {
 
   void insertTask(Task task) {
-    tasksList.add(task);
+    Variables.tasksList.add(task);
   }
 
   void deleteTask(Task task) {
-    tasksList.remove(task);
+    Variables.tasksList.remove(task);
   }
 
   void updateTask(int taskIndex, Task editedTask) {
-    tasksList[taskIndex] = editedTask;
+    Variables.tasksList[taskIndex] = editedTask;
   }
 
   // ???
@@ -25,27 +25,22 @@ class DataAccess {
 
   void addTaskToShPref() async {
     // Encode and store data in SharedPreferences
-    final String encodedData = Task.encode(tasksList);
-    await Variables.taskShPreference!.setString(CustomKeys.taskPrefKey, encodedData);
+    final String encodedData = Task.encode(Variables.tasksList);
+    await Variables.taskShPreference!
+        .setString(CustomKeys.taskPrefKey, encodedData);
+    print(encodedData);
   }
 
   List<Task> readTaskFromShPrefs() {
     // Fetch and decode data
-    final String? taskString = Variables.taskShPreference!.getString(CustomKeys.taskPrefKey);
+    final String? taskString =
+        Variables.taskShPreference!.getString(CustomKeys.taskPrefKey);
     return Task.decode(taskString!);
   }
 
   Future<void> defineSharedPref() async {
-    if(Variables.taskShPreference != null){
-      final String? taskString = Variables.taskShPreference!.getString(CustomKeys.taskPrefKey);
-      tasksList = Task.decode(taskString!);
-    }
-    else{
-      Variables.taskShPreference = await SharedPreferences.getInstance();
-      addTaskToShPref();
-      tasksList = readTaskFromShPrefs();
-    }
+    Variables.taskShPreference = await SharedPreferences.getInstance();
+    Variables.tasksList = readTaskFromShPrefs();
   }
-
 
 }

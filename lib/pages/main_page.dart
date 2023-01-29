@@ -1,12 +1,11 @@
+import 'dart:io';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:to_do_list/core/constants.dart';
 import 'package:to_do_list/core/data_access.dart';
-import 'package:to_do_list/core/keys.dart';
 import 'package:to_do_list/core/variables.dart';
 import 'package:to_do_list/custom_views/custom_bottom_sheet.dart';
 import 'package:to_do_list/custom_views/custom_drawer.dart';
-import 'package:to_do_list/custom_views/custom_drawer_item.dart';
 import 'package:to_do_list/custom_views/custom_floating_button.dart';
 import 'package:to_do_list/custom_views/custom_list_item.dart';
 import 'package:to_do_list/pages/data_from_server.dart';
@@ -26,7 +25,7 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: appBarTitle(),
       body: listViewInBody(),
       floatingActionButton: floatingButtonAction(context),
       drawer: buildDrawer(),
@@ -38,15 +37,31 @@ class _MainPageState extends State<MainPage> {
     // TODO: implement initState
     super.initState();
     DataAccess().defineSharedPref();
+    whichPlatform();
+  }
+
+  AppBar appBarTitle() {
+    return AppBar(
+        title: Text(Variables.platformIsAndroid!
+            ? 'Android application'
+            : 'Web application'),
+        centerTitle: true);
+  }
+
+  void whichPlatform() {
+    if (kIsWeb) {
+      Variables.platformIsAndroid = false;
+    } else if (Platform.isAndroid) {
+      Variables.platformIsAndroid = true;
+    }
   }
 
   Widget buildDrawer() {
-    return Drawer(
-        child: CustomDrawer(
-          actionOnTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const DataFromServer()));
-          },
+    return Drawer(child: CustomDrawer(
+      actionOnTap: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const DataFromServer()));
+      },
     ));
   }
 
@@ -57,15 +72,13 @@ class _MainPageState extends State<MainPage> {
         setState(() {
           showModalBottomSheet(
             context: context,
-            builder: (context) => CustomBottomSheet(),
-          ).then(
-            (value) {
+            builder: (context) => CustomBottomSheet(),)
+              .then((value) {
               setState(() {
                 Task newTask = Task(
-                    taskName: value,
-                    taskIcon: Icons.ac_unit,
+                    taskName: (value)['taskName'],
+                    taskIcon: (value)['taskIcon'],
                     taskImage: 'assets/images/work.jpg');
-
                 Variables.dataAccess.insertTask(newTask);
                 Variables.dataAccess.addTaskToShPref();
               });
@@ -77,6 +90,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget listViewInBody() {
+    // show background for page
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
@@ -85,7 +99,7 @@ class _MainPageState extends State<MainPage> {
         ),
       ),
       child: ListView.builder(
-        itemCount: tasksList.length,
+        itemCount: Variables.tasksList.length,
         itemExtent: 60,
         padding: const EdgeInsets.all(30),
         itemBuilder: (context, index) => InkWell(
@@ -93,13 +107,15 @@ class _MainPageState extends State<MainPage> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => DetailsPage(task: tasksList[index]),
+                  builder: (context) =>
+                      DetailsPage(task: Variables.tasksList[index]),
                 ));
           },
           child: CustomListItem(
             itemIndex: index,
-            name: tasksList[index].taskName,
-            icon: tasksList[index].taskIcon!,
+            name: Variables.tasksList[index].taskName,
+            icon: Variables.tasksList[index].taskIcon!,
+            iconColor: Colors.black45,
             onSelectedPopupItem: (value) {
               updateList(value, index);
             },
@@ -112,19 +128,20 @@ class _MainPageState extends State<MainPage> {
   void updateList(dynamic value, int index) {
     if (value == 'Delete') {
       setState(() {
-        Variables.dataAccess.deleteTask(tasksList[index]);
+        Variables.dataAccess.deleteTask(Variables.tasksList[index]);
       });
     }
     if (value == 'Edit') {
       showModalBottomSheet(
         context: context,
         builder: (context) {
-          return CustomBottomSheet(task: tasksList[index]);
+          return CustomBottomSheet(task: Variables.tasksList[index]);
         },
-      ).then(
-        (value) {
+      ).then((value) {
           setState(() {
-            tasksList[index].taskName = value;
+            Variables.tasksList[index].taskName = (value)['taskName'];
+            Variables.tasksList[index].taskIcon = (value)['taskIcon'];
+            Variables.dataAccess.addTaskToShPref();
           });
         },
       );

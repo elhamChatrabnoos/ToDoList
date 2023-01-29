@@ -20,18 +20,20 @@ class _DataFromServerState extends State<DataFromServer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(),
       body: loading
           ? const Center(
               child: CircularProgressIndicator(),
             )
           : ListView.builder(
-              padding: EdgeInsets.all(10),
+              padding: const EdgeInsets.all(10),
               itemCount: todosList.length,
               itemBuilder: (context, index) => CustomListItem(
                     name: todosList[index].title!,
                     itemIndex: index,
                     icon: Icons.ac_unit,
-                  )),
+                  )
+      ),
     );
   }
 

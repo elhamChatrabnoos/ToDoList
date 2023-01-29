@@ -12,4 +12,6 @@ class CustomSizes{
   static const normalText = 20;
   static const littleText = 10;
 
+  static const littlePadding = EdgeInsets.all(5);
+
 }
