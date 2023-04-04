@@ -55,7 +55,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
             hintText: widget.hintText,
             border: widget.borderStyle,
             suffixIcon: InkWell(
-                onTap: widget.onTap, child: widget.icon ?? const SizedBox()),
+                onTap: widget.onTap, child: widget.icon ?? const SizedBox()
+            ),
           ),
           obscureText: widget.secure,
         ),

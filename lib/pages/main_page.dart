@@ -58,10 +58,10 @@ class _MainPageState extends State<MainPage> {
 
   Widget buildDrawer() {
     return Drawer(child: CustomDrawer(
-      actionOnTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const DataFromServer()));
-      },
+      // actionOnTap: () {
+      //   Navigator.push(context,
+      //       MaterialPageRoute(builder: (context) => const DataFromServer()));
+      // },
     ));
   }
 
