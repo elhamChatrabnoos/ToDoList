@@ -5,7 +5,6 @@ class Task {
   String taskName;
   IconData? taskIcon;
   String taskImage;
-  int? ap;
 
   Task({
     required this.taskName,
