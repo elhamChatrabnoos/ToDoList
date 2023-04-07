@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:to_do_list/custom_views/custom_bottom_sheet.dart';
-import 'package:to_do_list/custom_views/popup_menu_item.dart';
 import 'package:to_do_list/core/data_access.dart';
+import 'package:to_do_list/custom_views/popup_menu_item.dart';
 import 'package:to_do_list/models/task.dart';
 
 class CustomListItem extends StatefulWidget {
@@ -51,9 +50,6 @@ class _CustomListItemState extends State<CustomListItem> {
               itemBuilder: (context) => [
                 const PopupMenuItem(
                   child: CustomPopupItem(icon: Icons.edit, text: 'Edit'),
-                ),
-                const PopupMenuItem(
-                  child: CustomPopupItem(icon: Icons.copy, text: 'Duplicate'),
                 ),
                 const PopupMenuItem(
                   child: CustomPopupItem(

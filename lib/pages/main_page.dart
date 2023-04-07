@@ -2,19 +2,18 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:to_do_list/core/data_access.dart';
+import 'package:hive/hive.dart';
 import 'package:to_do_list/core/variables.dart';
 import 'package:to_do_list/custom_views/custom_bottom_sheet.dart';
-import 'package:to_do_list/custom_views/custom_drawer.dart';
 import 'package:to_do_list/custom_views/custom_floating_button.dart';
 import 'package:to_do_list/custom_views/custom_list_item.dart';
-import 'package:to_do_list/pages/data_from_server.dart';
 
+import '../core/keys.dart';
 import '../models/task.dart';
-import 'details.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key, this.task}) : super(key: key);
+
   final String? task;
 
   @override
@@ -22,13 +21,15 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+
+  final taskBox = Hive.box<Task>(CustomKeys.taskListDb);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBarTitle(),
       body: listViewInBody(),
       floatingActionButton: floatingButtonAction(context),
-      drawer: buildDrawer(),
     );
   }
 
@@ -36,15 +37,13 @@ class _MainPageState extends State<MainPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    DataAccess().defineSharedPref();
     whichPlatform();
   }
 
+
   AppBar appBarTitle() {
     return AppBar(
-        title: Text(Variables.platformIsAndroid!
-            ? 'Android application'
-            : 'Web application'),
+        title: Text(Variables.platformIsAndroid! ? 'ToDos' : ''),
         centerTitle: true);
   }
 
@@ -56,15 +55,6 @@ class _MainPageState extends State<MainPage> {
     }
   }
 
-  Widget buildDrawer() {
-    return Drawer(child: CustomDrawer(
-      // actionOnTap: () {
-      //   Navigator.push(context,
-      //       MaterialPageRoute(builder: (context) => const DataFromServer()));
-      // },
-    ));
-  }
-
   Widget floatingButtonAction(BuildContext context) {
     return CustomFloatingButton(
       icon: Icons.add,
@@ -72,21 +62,24 @@ class _MainPageState extends State<MainPage> {
         setState(() {
           showModalBottomSheet(
             context: context,
-            builder: (context) => CustomBottomSheet(),)
-              .then((value) {
+            builder: (context) => CustomBottomSheet(),
+          ).then(
+            (value) {
               setState(() {
-                Task newTask = Task(
-                    taskName: (value)['taskName'],
-                    taskIcon: (value)['taskIcon'],
-                    taskImage: 'assets/images/work.jpg');
-                Variables.dataAccess.insertTask(newTask);
-                Variables.dataAccess.addTaskToShPref();
+                _saveNewTask(value);
               });
             },
           );
         });
       },
     );
+  }
+
+  Future<void> _saveNewTask(value) async {
+    Task newTask = Task(
+        taskName: (value)['taskName'],
+        taskImage: 'assets/images/work.jpg');
+    Variables.dataAccess.insertTask(newTask);
   }
 
   Widget listViewInBody() {
@@ -98,29 +91,23 @@ class _MainPageState extends State<MainPage> {
           fit: BoxFit.cover,
         ),
       ),
-      child: ListView.builder(
-        itemCount: Variables.tasksList.length,
+      child: taskBox.length > 0 ? ListView.builder(
+        itemCount: taskBox.length,
         itemExtent: 60,
         padding: const EdgeInsets.all(30),
         itemBuilder: (context, index) => InkWell(
-          onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      DetailsPage(task: Variables.tasksList[index]),
-                ));
-          },
           child: CustomListItem(
             itemIndex: index,
-            name: Variables.tasksList[index].taskName,
-            icon: Variables.tasksList[index].taskIcon!,
+            name: taskBox.getAt(index)!.taskName,
+            icon: Icons.ac_unit,
             iconColor: Colors.black45,
             onSelectedPopupItem: (value) {
               updateList(value, index);
             },
           ),
         ),
+      ) : const Center(
+        child: Text('no item added yet.'),
       ),
     );
   }
@@ -128,20 +115,21 @@ class _MainPageState extends State<MainPage> {
   void updateList(dynamic value, int index) {
     if (value == 'Delete') {
       setState(() {
-        Variables.dataAccess.deleteTask(Variables.tasksList[index]);
+        taskBox.deleteAt(index);
       });
     }
     if (value == 'Edit') {
       showModalBottomSheet(
         context: context,
         builder: (context) {
-          return CustomBottomSheet(task: Variables.tasksList[index]);
+          return CustomBottomSheet(task: taskBox.getAt(index)!);
         },
-      ).then((value) {
+      ).then(
+        (value) {
           setState(() {
-            Variables.tasksList[index].taskName = (value)['taskName'];
-            Variables.tasksList[index].taskIcon = (value)['taskIcon'];
-            Variables.dataAccess.addTaskToShPref();
+            final task = taskBox.getAt(index);
+            task?.taskName = (value)['taskName'];
+            task?.save();
           });
         },
       );

@@ -1,3 +1,3 @@
 class CustomKeys{
-  static String taskPrefKey = 'taskKey';
+  static String taskListDb = 'taskList';
 }

@@ -16,7 +16,6 @@ class CustomBottomSheet extends StatefulWidget {
 
 class _CustomBottomSheetState extends State<CustomBottomSheet> {
 
-  // Task? newTask = Task(taskName: 'taskName', taskIcon: Icons.padding, taskImage: 'taskImage');
   String taskName = '';
   IconData taskIcon = Icons.close;
 
@@ -85,9 +84,7 @@ class _CustomBottomSheetState extends State<CustomBottomSheet> {
           CustomButton(
             text: 'Save',
             onPressed: () {
-              // {'taskName':taskName, 'taskIcon':taskIcon}
-              // Navigator.pop(context,Task(taskName: taskName, taskIcon: taskIcon, taskImage: taskImage) );
-              Navigator.pop(context, {'taskName':taskName, 'taskIcon':taskIcon});
+              Navigator.pop(context, {'taskName':taskName});
             },
           )
         ],
